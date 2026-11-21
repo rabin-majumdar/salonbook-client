@@ -17,3 +17,7 @@ export type Appointment = {
     status: "pending" | "confirmed" | "cancelled";
     createdAt: string;
 };
+
+export type AdminAppointment = Appointment & {
+    customer: { name: string; email: string; image?: string } | null;
+};
