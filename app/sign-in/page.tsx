@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -16,8 +16,10 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-export default function SignInPage() {
+function SignInForm() {
     const router = useRouter();
+    const params = useSearchParams();
+    const redirectTo = params.get("redirect");
     const [loading, setLoading] = useState(false);
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -35,12 +37,14 @@ export default function SignInPage() {
             return;
         }
         toast.success("Signed in successfully");
-        router.push("/dashboard");
+        router.push(
+            redirectTo && redirectTo.startsWith("/") ? redirectTo : "/dashboard"
+        );
         router.refresh();
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center px-4 py-10">
+        <div className="flex min-h-[70vh] items-center justify-center px-4 py-10">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>Welcome back</CardTitle>
@@ -69,5 +73,13 @@ export default function SignInPage() {
                 </CardContent>
             </Card>
         </div>
+    );
+}
+
+export default function SignInPage() {
+    return (
+        <Suspense fallback={null}>
+            <SignInForm />
+        </Suspense>
     );
 }
