@@ -1,15 +1,19 @@
 import Link from "next/link";
 import type { Service } from "@/types/service";
+import Image from "next/image";
 
 export function ServiceCard({ service }: { service: Service }) {
     return (
         <div className="flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-                src={service.image}
-                alt={service.serviceName}
-                className="h-48 w-full object-cover"
-            />
+            <div className="relative h-48 w-full">
+                <Image
+                    src={service.image}
+                    alt={service.serviceName}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                />
+            </div>
             <div className="flex flex-1 flex-col gap-2 p-4">
                 <span className="w-fit rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
                     {service.category}
