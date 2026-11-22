@@ -1,23 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api";
+import { fmtDate } from "@/lib/format";
 import type { Appointment } from "@/types/appointment";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { Modal } from "@/components/dashboard/modal";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
-const fmtDate = (iso: string) =>
-    new Date(iso).toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    });
+type Filter = "all" | "pending" | "confirmed" | "cancelled" | "payment";
+
+const TABS: { key: Filter; label: string }[] = [
+    { key: "all", label: "All" },
+    { key: "pending", label: "Pending" },
+    { key: "confirmed", label: "Confirmed" },
+    { key: "payment", label: "Awaiting payment" },
+    { key: "cancelled", label: "Cancelled" },
+];
+
+function matches(a: Appointment, f: Filter) {
+    if (f === "all") return true;
+    if (f === "payment") return a.status === "confirmed" && a.paymentStatus === "unpaid";
+    return a.status === f;
+}
 
 export default function MyAppointmentsPage() {
     const [items, setItems] = useState<Appointment[] | null>(null);
+    const [filter, setFilter] = useState<Filter>("all");
     const [details, setDetails] = useState<Appointment | null>(null);
     const [toCancel, setToCancel] = useState<Appointment | null>(null);
     const [busyId, setBusyId] = useState("");
@@ -71,6 +82,9 @@ export default function MyAppointmentsPage() {
         }
     }
 
+    const visible = items?.filter((a) => matches(a, filter));
+    const count = (f: Filter) => items?.filter((a) => matches(a, f)).length ?? 0;
+
     return (
         <div>
             <h1 className="text-2xl font-bold">My Appointments</h1>
@@ -78,22 +92,48 @@ export default function MyAppointmentsPage() {
                 Track your requests, pay for confirmed appointments.
             </p>
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-5 flex flex-wrap gap-2">
+                {TABS.map((t) => (
+                    <button
+                        key={t.key}
+                        type="button"
+                        onClick={() => setFilter(t.key)}
+                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition sm:gap-2 sm:px-4 sm:py-1.5 sm:text-sm ${filter === t.key
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "hover:bg-accent"
+                            }`}
+                    >
+                        {t.label}
+                        {items && (
+                            <span
+                                className={`rounded-full px-1.5 text-xs ${filter === t.key ? "bg-white/25" : "bg-muted"
+                                    }`}
+                            >
+                                {count(t.key)}
+                            </span>
+                        )}
+                    </button>
+                ))}
+            </div>
+
+            <div className="mt-5 space-y-4">
                 {items === null &&
                     Array.from({ length: 3 }).map((_, i) => (
                         <div key={i} className="h-28 animate-pulse rounded-2xl bg-muted" />
                     ))}
 
-                {items?.length === 0 && (
-                    <p className="rounded-2xl border p-6 text-muted-foreground">
-                        You have no appointment requests yet.
+                {items && visible?.length === 0 && (
+                    <p className="rounded-2xl border bg-card p-6 text-center text-muted-foreground">
+                        {items.length === 0
+                            ? "You have no appointment requests yet."
+                            : "No appointments match this filter."}
                     </p>
                 )}
 
-                {items?.map((a) => (
+                {visible?.map((a) => (
                     <div
                         key={a._id}
-                        className="flex flex-col gap-4 rounded-2xl border p-4 sm:flex-row sm:items-center"
+                        className="flex flex-col gap-4 rounded-2xl border bg-card p-4 sm:flex-row sm:items-center"
                     >
                         <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl sm:w-32">
                             <Image
