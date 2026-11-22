@@ -7,10 +7,12 @@ import { fmtDate } from "@/lib/format";
 import type { User } from "@/types/user";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { Modal } from "@/components/dashboard/modal";
+import { SearchInput } from "@/components/dashboard/search-input";
 import { Button } from "@/components/ui/button";
 
 export default function ManageUsersPage() {
     const [items, setItems] = useState<User[] | null>(null);
+    const [query, setQuery] = useState("");
     const [details, setDetails] = useState<User | null>(null);
     const [toToggle, setToToggle] = useState<User | null>(null);
     const [busy, setBusy] = useState(false);
@@ -48,12 +50,29 @@ export default function ManageUsersPage() {
         }
     }
 
+    const q = query.trim().toLowerCase();
+    const visible = items?.filter(
+        (u) =>
+            !q ||
+            u.name.toLowerCase().includes(q) ||
+            u.email.toLowerCase().includes(q)
+    );
+
     return (
         <div>
-            <h1 className="text-2xl font-bold">Manage Users</h1>
-            <p className="mt-1 text-muted-foreground">
-                Registered customers. Blocked users cannot use protected features.
-            </p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h1 className="text-2xl font-bold">Manage Users</h1>
+                    <p className="mt-1 text-muted-foreground">
+                        Registered customers. Blocked users cannot use protected features.
+                    </p>
+                </div>
+                <SearchInput
+                    value={query}
+                    onChange={setQuery}
+                    placeholder="Search by name or email"
+                />
+            </div>
 
             <div className="mt-6 overflow-x-auto rounded-2xl border">
                 <table className="w-full min-w-2xl text-left text-sm">
@@ -74,14 +93,21 @@ export default function ManageUsersPage() {
                                 </td>
                             </tr>
                         )}
-                        {items?.length === 0 && (
+                        {items && items.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                                     No registered customers yet.
                                 </td>
                             </tr>
                         )}
-                        {items?.map((u) => (
+                        {items && items.length > 0 && visible?.length === 0 && (
+                            <tr>
+                                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                                    No users match your search.
+                                </td>
+                            </tr>
+                        )}
+                        {visible?.map((u) => (
                             <tr key={u._id} className="border-b last:border-0">
                                 <td className="px-4 py-3 font-medium">{u.name}</td>
                                 <td className="px-4 py-3">{u.email}</td>
