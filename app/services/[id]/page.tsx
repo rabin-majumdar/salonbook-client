@@ -9,6 +9,7 @@ import { authClient } from "@/lib/auth-client";
 import { apiFetch } from "@/lib/api";
 import type { Service } from "@/types/service";
 import { BookingForm } from "@/components/services/booking-form";
+import { RelatedServices } from "@/components/services/related-services";
 
 type Result = { id: string; service: Service | null; error: string };
 
@@ -134,6 +135,7 @@ export default function ServiceDetailsPage() {
                     )}
                 </div>
             </div>
+            <RelatedServices category={service.category} currentId={service._id} />
         </>
     );
 }
