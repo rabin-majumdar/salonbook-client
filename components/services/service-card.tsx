@@ -4,14 +4,14 @@ import Image from "next/image";
 
 export function ServiceCard({ service }: { service: Service }) {
     return (
-        <div className="flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md">
-            <div className="relative h-48 w-full">
+        <div className="group flex flex-col overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:shadow-md">
+            <div className="relative h-48 w-full overflow-hidden">
                 <Image
                     src={service.image}
                     alt={service.serviceName}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
+                    className="object-cover transition duration-300 group-hover:scale-105"
                 />
             </div>
             <div className="flex flex-1 flex-col gap-2 p-4">
