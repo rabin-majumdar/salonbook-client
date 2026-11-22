@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GoogleButton } from "@/components/auth/google-button";
 import {
     Card,
     CardContent,
@@ -83,6 +84,14 @@ export default function SignUpPage() {
                             {loading ? "Creating account..." : "Sign Up"}
                         </Button>
                     </form>
+
+                    <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="h-px flex-1 bg-border" />
+                        or
+                        <span className="h-px flex-1 bg-border" />
+                    </div>
+                    <GoogleButton />
+
                     <p className="mt-4 text-center text-sm">
                         Already have an account?{" "}
                         <Link href="/sign-in" className="underline">
