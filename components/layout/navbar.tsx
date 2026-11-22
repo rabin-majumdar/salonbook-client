@@ -55,7 +55,12 @@ export function Navbar() {
                                 {session.user.name}
                             </button>
                             {profileOpen && (
+
                                 <div className="absolute right-0 mt-2 w-44 rounded-lg border bg-background p-1 shadow-md">
+                                    <div className="border-b px-3 py-2">
+                                        <p className="truncate text-sm font-semibold">{session.user.name}</p>
+                                        <p className="truncate text-xs text-muted-foreground">{session.user.email}</p>
+                                    </div>
                                     <Link
                                         href="/dashboard"
                                         onClick={() => setProfileOpen(false)}
