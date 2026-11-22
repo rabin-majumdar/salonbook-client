@@ -112,6 +112,9 @@ export default function MyAppointmentsPage() {
                                 {a.serviceId?.category} · {a.appointmentDate} · {a.timeSlot} · ৳
                                 {a.servicePrice}
                             </p>
+                            <p className="text-xs text-muted-foreground">
+                                Requested on {fmtDate(a.createdAt)}
+                            </p>
                             <div className="flex flex-wrap gap-2 pt-1">
                                 <StatusBadge value={a.status} />
                                 <StatusBadge value={a.paymentStatus} />
