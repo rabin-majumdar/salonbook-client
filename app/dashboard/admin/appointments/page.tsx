@@ -8,10 +8,12 @@ import type { AdminAppointment } from "@/types/appointment";
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { Modal } from "@/components/dashboard/modal";
 import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/dashboard/search-input";
 
 export default function ManageAppointmentsPage() {
     const [items, setItems] = useState<AdminAppointment[] | null>(null);
     const [filter, setFilter] = useState("");
+    const [query, setQuery] = useState("");
     const [details, setDetails] = useState<AdminAppointment | null>(null);
     const [toCancel, setToCancel] = useState<AdminAppointment | null>(null);
     const [busyId, setBusyId] = useState("");
@@ -66,7 +68,20 @@ export default function ManageAppointmentsPage() {
         }
     }
 
-    const visible = items?.filter((a) => !filter || a.status === filter);
+    const q = query.trim().toLowerCase();
+    const visible = items?.filter((a) => {
+        if (filter && a.status !== filter) return false;
+        if (!q) return true;
+        const haystack = [
+            a.customer?.name,
+            a.customer?.email,
+            a.serviceId?.serviceName,
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+        return haystack.includes(q);
+    });
 
     return (
         <div>
@@ -77,16 +92,23 @@ export default function ManageAppointmentsPage() {
                         Review, confirm or cancel appointment requests.
                     </p>
                 </div>
-                <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="h-10 rounded-lg border bg-background px-3 text-sm"
-                >
-                    <option value="">All statuses</option>
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
+                <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+                    <SearchInput
+                        value={query}
+                        onChange={setQuery}
+                        placeholder="Search customer or service"
+                    />
+                    <select
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        className="h-10 rounded-lg border bg-background px-3 text-sm"
+                    >
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
             </div>
 
             <div className="mt-6 overflow-x-auto rounded-2xl border">
