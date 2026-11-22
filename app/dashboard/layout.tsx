@@ -40,6 +40,18 @@ export default function DashboardLayout({
         );
     }
 
+    if (session.user.isBlocked) {
+        return (
+            <div className="mx-auto max-w-lg px-4 py-24 text-center">
+                <h1 className="text-2xl font-bold">Account blocked</h1>
+                <p className="mt-2 text-muted-foreground">
+                    Your account has been blocked by an administrator. Please contact the
+                    salon for help.
+                </p>
+            </div>
+        );
+    }
+
     return (
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 md:flex-row md:gap-8">
             <Sidebar
