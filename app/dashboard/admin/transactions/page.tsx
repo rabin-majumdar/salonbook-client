@@ -6,9 +6,11 @@ import { apiFetch } from "@/lib/api";
 import { fmtDate } from "@/lib/format";
 import type { Transaction } from "@/types/transaction";
 import { StatusBadge } from "@/components/dashboard/status-badge";
+import { SearchInput } from "@/components/dashboard/search-input";
 
 export default function TransactionsPage() {
     const [items, setItems] = useState<Transaction[] | null>(null);
+    const [query, setQuery] = useState("");
 
     useEffect(() => {
         apiFetch<Transaction[]>("/api/payments/admin/all", { auth: true })
@@ -19,12 +21,36 @@ export default function TransactionsPage() {
             });
     }, []);
 
+    const q = query.trim().toLowerCase();
+    const visible = items?.filter((t) => {
+        if (!q) return true;
+        const haystack = [
+            t.customer?.name,
+            t.customer?.email,
+            t.appointmentId?.serviceId?.serviceName,
+            t.stripeSessionId,
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+        return haystack.includes(q);
+    });
+
     return (
         <div>
-            <h1 className="text-2xl font-bold">Transactions</h1>
-            <p className="mt-1 text-muted-foreground">
-                Payments recorded from verified Stripe events.
-            </p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h1 className="text-2xl font-bold">Transactions</h1>
+                    <p className="mt-1 text-muted-foreground">
+                        Payments recorded from verified Stripe events.
+                    </p>
+                </div>
+                <SearchInput
+                    value={query}
+                    onChange={setQuery}
+                    placeholder="Search customer or service"
+                />
+            </div>
 
             <div className="mt-6 overflow-x-auto rounded-2xl border">
                 <table className="w-full min-w-4xl text-left text-sm">
@@ -47,14 +73,21 @@ export default function TransactionsPage() {
                                 </td>
                             </tr>
                         )}
-                        {items?.length === 0 && (
+                        {items && items.length === 0 && (
                             <tr>
                                 <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
                                     No transactions yet.
                                 </td>
                             </tr>
                         )}
-                        {items?.map((t) => (
+                        {items && items.length > 0 && visible?.length === 0 && (
+                            <tr>
+                                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                                    No transactions match your search.
+                                </td>
+                            </tr>
+                        )}
+                        {visible?.map((t) => (
                             <tr key={t._id} className="border-b last:border-0">
                                 <td className="px-4 py-3">
                                     <p className="font-medium">{t.customer?.name || "Unknown"}</p>
