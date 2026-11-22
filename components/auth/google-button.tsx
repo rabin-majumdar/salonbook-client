@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { IconBrandGoogle } from "@tabler/icons-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
@@ -25,14 +26,19 @@ export function GoogleButton({
     }
 
     return (
-        <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={handleClick}
-            disabled={loading}
-        >
-            {loading ? "Redirecting to Google..." : "Continue with Google"}
-        </Button>
+        <>
+            <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handleClick}
+                disabled={loading}
+            >
+                <IconBrandGoogle data-icon="inline-start" />
+
+                {loading ? "Redirecting to Google..." : "Continue with Google"}
+            </Button>
+        </>
+
     );
 }

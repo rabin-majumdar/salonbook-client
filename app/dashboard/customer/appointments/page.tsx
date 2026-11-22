@@ -97,7 +97,7 @@ export default function MyAppointmentsPage() {
                     >
                         <div className="relative h-24 w-full shrink-0 overflow-hidden rounded-xl sm:w-32">
                             <Image
-                                src={a.serviceId?.image || "/hero.jpg"}
+                                src={a.serviceId?.image || "/hero.png"}
                                 alt={a.serviceId?.serviceName || "Service"}
                                 fill
                                 sizes="128px"

@@ -12,7 +12,7 @@ export function AuthShell({
             <div className="relative hidden lg:block">
                 <div
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: "url('/hero.jpg')" }}
+                    style={{ backgroundImage: "url('/hero.png')" }}
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/75 via-black/30 to-black/10" />
                 <div className="relative flex h-full flex-col justify-end p-10 text-white">

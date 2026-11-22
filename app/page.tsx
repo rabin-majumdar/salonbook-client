@@ -14,7 +14,7 @@ export default function HomePage() {
     <>
       <section
         className="relative flex min-h-[70vh] items-center bg-cover bg-center"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
+        style={{ backgroundImage: "url('/hero.png')" }}
       >
         <div className="absolute inset-0 bg-black/55" />
         <div className="relative mx-auto max-w-6xl px-4 text-white">
