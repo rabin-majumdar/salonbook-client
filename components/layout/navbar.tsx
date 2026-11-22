@@ -46,7 +46,7 @@ export function Navbar() {
                             >
                                 {session.user.image ? (
                                     // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={session.user.image} alt="" className="size-8 rounded-full object-cover" />
+                                    <img src={session.user.image} alt="" referrerPolicy="no-referrer" className="size-8 rounded-full object-cover" />
                                 ) : (
                                     <span className="flex size-8 items-center justify-center rounded-full bg-muted">
                                         {session.user.name.charAt(0).toUpperCase()}
