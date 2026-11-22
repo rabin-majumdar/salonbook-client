@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft, Clock, Tag } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { apiFetch } from "@/lib/api";
 import type { Service } from "@/types/service";
 import { BookingForm } from "@/components/services/booking-form";
-import Image from "next/image";
 
 type Result = { id: string; service: Service | null; error: string };
 
@@ -16,6 +17,7 @@ export default function ServiceDetailsPage() {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
     const [result, setResult] = useState<Result | null>(null);
+
     const loading = !result || result.id !== id;
 
     useEffect(() => {
@@ -69,49 +71,69 @@ export default function ServiceDetailsPage() {
     const isActive = service.status === "active";
 
     return (
-        <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 lg:grid-cols-2">
-            
-            <div className="relative h-80 w-full overflow-hidden rounded-2xl lg:h-full lg:max-h-112">
-                <Image
-                    src={service.image}
-                    alt={service.serviceName}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1024px) 50vw, 100vw"
-                />
+        <>
+            <div className="mx-auto max-w-5xl px-4 pt-6">
+                <Link
+                    href="/services"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+                >
+                    <ArrowLeft className="size-4" />
+                    Back to services
+                </Link>
             </div>
 
-            <div className="space-y-5">
-                <div>
-                    <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
-                        {service.category}
-                    </span>
-                    <h1 className="mt-3 text-3xl font-bold">{service.serviceName}</h1>
-                </div>
-                <p className="text-muted-foreground">{service.description}</p>
-                <div className="flex gap-8">
-                    <div>
-                        <p className="text-sm text-muted-foreground">Price</p>
-                        <p className="text-xl font-semibold">৳{service.price}</p>
-                    </div>
-                    <div>
-                        <p className="text-sm text-muted-foreground">Duration</p>
-                        <p className="text-xl font-semibold">{service.duration} min</p>
-                    </div>
+            <div className="mx-auto grid max-w-5xl gap-8 px-4 py-6 lg:grid-cols-2">
+                <div className="relative h-80 w-full overflow-hidden rounded-2xl lg:h-full lg:min-h-96">
+                    <Image
+                        src={service.image}
+                        alt={service.serviceName}
+                        fill
+                        sizes="(min-width: 1024px) 50vw, 100vw"
+                        className="object-cover"
+                        priority
+                    />
                 </div>
 
-                {isAdmin ? (
-                    <p className="rounded-lg border p-4 text-sm">
-                        Admin accounts cannot book appointments.
-                    </p>
-                ) : !isActive ? (
-                    <p className="rounded-lg border p-4 text-sm">
-                        This service is currently unavailable for booking.
-                    </p>
-                ) : (
-                    <BookingForm serviceId={service._id} />
-                )}
+                <div className="space-y-5">
+                    <div>
+                        <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
+                            {service.category}
+                        </span>
+                        <h1 className="mt-3 text-3xl font-bold">{service.serviceName}</h1>
+                    </div>
+
+                    <p className="text-muted-foreground">{service.description}</p>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="rounded-xl border bg-card p-4">
+                            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <Tag className="size-4" /> Price
+                            </p>
+                            <p className="mt-1 text-2xl font-bold text-primary">
+                                ৳{service.price}
+                            </p>
+                        </div>
+                        <div className="rounded-xl border bg-card p-4">
+                            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <Clock className="size-4" /> Duration
+                            </p>
+                            <p className="mt-1 text-2xl font-bold">{service.duration} min</p>
+                        </div>
+                    </div>
+
+                    {isAdmin ? (
+                        <p className="rounded-lg border p-4 text-sm">
+                            Admin accounts cannot book appointments.
+                        </p>
+                    ) : !isActive ? (
+                        <p className="rounded-lg border p-4 text-sm">
+                            This service is currently unavailable for booking.
+                        </p>
+                    ) : (
+                        <BookingForm serviceId={service._id} />
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
