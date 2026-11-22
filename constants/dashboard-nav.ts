@@ -3,6 +3,7 @@ export type NavItem = { label: string; href: string };
 export const CUSTOMER_NAV: NavItem[] = [
     { label: "Overview", href: "/dashboard/customer" },
     { label: "My Appointments", href: "/dashboard/customer/appointments" },
+    { label: "Payment History", href: "/dashboard/customer/payments" },
     { label: "My Profile", href: "/dashboard/customer/profile" },
 ];
 
