@@ -5,8 +5,14 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api";
 import type { AdminAppointment } from "@/types/appointment";
+import type { Transaction } from "@/types/transaction";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { StatusBadge } from "@/components/dashboard/status-badge";
+import {
+    AdminCharts,
+    type ServiceDatum,
+    type StatusDatum,
+} from "@/components/dashboard/admin-charts";
 
 type Stats = {
     totalCustomers: number;
@@ -17,7 +23,14 @@ type Stats = {
     successfulPayments: number;
 };
 
-type Data = { stats: Stats; recent: AdminAppointment[] };
+type Data = {
+    stats: Stats;
+    recent: AdminAppointment[];
+    status: StatusDatum[];
+    services: ServiceDatum[];
+    revenue: number;
+    currency: string;
+};
 
 export default function AdminOverviewPage() {
     const [data, setData] = useState<Data | null>(null);
@@ -26,8 +39,41 @@ export default function AdminOverviewPage() {
         Promise.all([
             apiFetch<Stats>("/api/stats/admin", { auth: true }),
             apiFetch<AdminAppointment[]>("/api/appointments/admin/all", { auth: true }),
+            apiFetch<Transaction[]>("/api/payments/admin/all", { auth: true }),
         ])
-            .then(([stats, items]) => setData({ stats, recent: items.slice(0, 5) }))
+            .then(([stats, items, transactions]) => {
+                const count = (s: string) => items.filter((a) => a.status === s).length;
+                const status: StatusDatum[] = [
+                    { name: "Pending", value: count("pending"), color: "#eab308" },
+                    { name: "Confirmed", value: count("confirmed"), color: "#22c55e" },
+                    { name: "Cancelled", value: count("cancelled"), color: "#ef4444" },
+                ];
+
+                const byService = new Map<string, number>();
+                items
+                    .filter((a) => a.status !== "cancelled")
+                    .forEach((a) => {
+                        const name = a.serviceId?.serviceName || "Service removed";
+                        byService.set(name, (byService.get(name) || 0) + 1);
+                    });
+                const services: ServiceDatum[] = [...byService.entries()]
+                    .map(([name, bookings]) => ({ name, bookings }))
+                    .sort((a, b) => b.bookings - a.bookings)
+                    .slice(0, 5);
+
+                const paid = transactions.filter((t) => t.status === "paid");
+                const revenue = paid.reduce((sum, t) => sum + t.amount, 0);
+                const currency = (paid[0]?.currency || "bdt").toUpperCase();
+
+                setData({
+                    stats,
+                    recent: items.slice(0, 5),
+                    status,
+                    services,
+                    revenue,
+                    currency,
+                });
+            })
             .catch((e) => toast.error(e.message));
     }, []);
 
@@ -48,6 +94,28 @@ export default function AdminOverviewPage() {
                 <StatCard label="Confirmed Appointments" value={stats?.confirmed} />
                 <StatCard label="Successful Payments" value={stats?.successfulPayments} />
             </div>
+
+            <div className="rounded-2xl border bg-card p-5">
+                <p className="text-sm text-muted-foreground">
+                    Total revenue (verified Stripe payments)
+                </p>
+                {data ? (
+                    <p className="mt-2 text-3xl font-bold text-primary">
+                        {data.revenue.toLocaleString()} {data.currency}
+                    </p>
+                ) : (
+                    <div className="mt-3 h-8 w-40 animate-pulse rounded bg-muted" />
+                )}
+            </div>
+
+            {data ? (
+                <AdminCharts status={data.status} services={data.services} />
+            ) : (
+                <div className="grid gap-6 lg:grid-cols-2">
+                    <div className="h-80 animate-pulse rounded-2xl bg-muted" />
+                    <div className="h-80 animate-pulse rounded-2xl bg-muted" />
+                </div>
+            )}
 
             <section>
                 <div className="flex items-center justify-between">
