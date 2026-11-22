@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { FeaturedServices } from "@/components/services/featured-services";
 import { CATEGORIES } from "@/constants/categories";
+import { Faq } from "@/components/home/faq";
 
 const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "Haircut & Styling": Scissors,
@@ -136,6 +137,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      <Faq />
     </>
   );
 }
