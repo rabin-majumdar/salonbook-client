@@ -73,13 +73,11 @@ export function HowItWorks() {
                     Four easy steps from browsing to a fresh new look.
                 </p>
             </div>
-
             <ol className="mt-12">
                 {STEPS.map((s, i) => {
                     const isLeft = i % 2 === 1;
                     const Icon = s.icon;
                     const MetaIcon = s.metaIcon;
-
                     return (
                         <li
                             key={s.title}
@@ -91,10 +89,10 @@ export function HowItWorks() {
                                     className="absolute -bottom-5 left-5 top-5 w-px bg-primary/30 md:left-1/2 md:-translate-x-1/2"
                                 />
                             )}
-
                             <div className="relative z-10 col-start-1 row-start-1 flex size-10 items-center justify-center rounded-full border bg-card text-primary shadow-sm ring-8 ring-background md:col-start-2">
                                 <Icon className="size-4" />
                             </div>
+
                             <div
                                 className={`col-start-2 row-start-1 ${isLeft ? "md:col-start-1 md:text-right" : "md:col-start-3"
                                     }`}
