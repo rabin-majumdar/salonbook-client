@@ -21,6 +21,11 @@ Next.js frontend for **SalonBook**, a role-based salon appointment booking platf
 - Stripe Checkout payment with success and cancel pages
 - Role-protected dashboard routes; blocked users cannot use protected features
 - Responsive layout, loading skeletons, toast notifications, confirmation dialogs and a custom 404 page
+- Profile photo upload during sign up and from the profile page (stored on ImgBB)
+- Drag and drop service image upload with live preview for admins
+- Status filter tabs with counts on the customer appointments page
+- Admin overview with revenue summary and charts, searchable admin tables
+- Responsive dashboard with a slide-in drawer menu on mobile, light and dark theme toggle
 
 ## Technology Stack
 
