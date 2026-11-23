@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ChevronRight, Clock, Mail, MapPin, Phone, Scissors } from "lucide-react";
+import { ChevronRight, Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 
 function FacebookIcon({ className }: { className?: string }) {
     return (
@@ -54,12 +55,8 @@ export function Footer() {
         <footer className="mt-16 border-t bg-accent/40">
             <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                    <Link href="/" className="flex items-center gap-2.5">
-                        <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                            <Scissors className="size-5" />
-                        </span>
-                        <span className="text-xl font-bold tracking-tight">SalonBook</span>
-                    </Link>
+                    <Logo />
+                    
                     <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                         Book your favourite salon services online, quickly and securely.
                         Look good, feel great.

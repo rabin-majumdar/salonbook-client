@@ -10,12 +10,12 @@ import {
     LogOut,
     Menu,
     Moon,
-    Scissors,
     Sun,
     X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { Logo } from "@/components/layout/logo";
 
 const NAV_LINKS = [
     { label: "Home", href: "/" },
@@ -75,13 +75,9 @@ export function Navbar() {
     return (
         <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
             <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-                <Link href="/" className="flex items-center gap-2.5">
-                    <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                        <Scissors className="size-5" />
-                    </span>
-                    <span className="text-xl font-bold tracking-tight">SalonBook</span>
-                </Link>
 
+                <Logo />
+                
                 <nav className="hidden items-center gap-1 md:flex">
                     {NAV_LINKS.map((l) => (
                         <Link
